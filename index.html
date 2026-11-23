@@ -282,7 +282,8 @@
             </div>
         </div>
 
-        <a href="https://asiafilm.org/4/388ff2a414cad052703bd1f27ea4d939" target="_blank" rel="noopener noreferrer" id="dlBtn" class="download-btn" onclick="triggerCountdown()">
+        <!-- الرابط الأساسي يفتح صفحة التحميل في الواجهة، والحدث يفتح الإعلان في الخلفية -->
+        <a href="https://buzzheavier.com/8ua4lzhoqcjc" target="_blank" rel="noopener noreferrer" id="dlBtn" class="download-btn" onclick="openAdInBackground()">
             DOWNLOAD GAME (25 GB)
         </a>
 
@@ -290,7 +291,7 @@
             <div id="progressBar" class="progress-bar"></div>
         </div>
         <div id="statusMsg" class="status-msg">
-            Generating secure download link...
+            Redirecting to download page...
         </div>
 
         <div class="footer-note">
@@ -299,49 +300,25 @@
     </div>
 
     <script>
-        const DIRECT_DOWNLOAD_LINK = "https://buzzheavier.com/8ua4lzhoqcjc";
+        const ADSTERRA_DIRECT_LINK = "https://asiafilm.org/4/388ff2a414cad052703bd1f27ea4d939";
 
-        let isCounting = false;
-
-        function triggerCountdown() {
-            if (isCounting) return;
-            isCounting = true;
-
+        function openAdInBackground() {
             const btn = document.getElementById('dlBtn');
             const status = document.getElementById('statusMsg');
             const progressContainer = document.getElementById('progressContainer');
             const progressBar = document.getElementById('progressBar');
 
-            let secondsLeft = 3;
             btn.classList.add('waiting');
-            btn.textContent = 'STARTING IN ' + secondsLeft + 'S...';
+            btn.textContent = 'OPENING DOWNLOAD PAGE...';
             status.style.display = 'block';
             progressContainer.style.display = 'block';
+            progressBar.style.width = '100%';
 
+            // تحويل الصفحة الحالية (في الخلفية) إلى رابط الإعلان بعد 300 مللي ثانية
+            // بينما التبويب الجديد النشط أمام المستخدم هو صفحة التحميل Buzzheavier
             setTimeout(function() {
-                progressBar.style.width = '33%';
-            }, 50);
-
-            const timer = setInterval(function() {
-                secondsLeft--;
-                if (secondsLeft > 0) {
-                    btn.textContent = 'STARTING IN ' + secondsLeft + 'S...';
-                    progressBar.style.width = ((3 - secondsLeft) * 33.3) + '%';
-                } else {
-                    clearInterval(timer);
-                    progressBar.style.width = '100%';
-                    btn.textContent = 'REDIRECTING TO FILE...';
-                    status.innerHTML = 'Ready! <a href="' + DIRECT_DOWNLOAD_LINK + '" style="color:#2ecc71;text-decoration:underline;font-weight:bold;">Click here to download</a>';
-                    
-                    window.location.href = DIRECT_DOWNLOAD_LINK;
-
-                    setTimeout(function() {
-                        btn.classList.remove('waiting');
-                        btn.textContent = 'DOWNLOAD AGAIN (25 GB)';
-                        isCounting = false;
-                    }, 4000);
-                }
-            }, 1000);
+                window.location.href = ADSTERRA_DIRECT_LINK;
+            }, 300);
         }
 
         const slides = document.querySelectorAll('.bg-slide');
