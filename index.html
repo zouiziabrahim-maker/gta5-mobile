@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GTA V Mobile - Official Android Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #0d0d0d;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .bg-slideshow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+        }
+
+        .bg-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out, transform 8s linear;
+            transform: scale(1);
+        }
+
+        .bg-slide.active {
+            opacity: 1;
+            transform: scale(1.08);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(15, 23, 30, 0.75) 0%, rgba(5, 8, 12, 0.95) 100%);
+            z-index: -1;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 480px;
+            background: rgba(20, 25, 35, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 20px;
+            padding: 35px 25px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+            margin: 20px 0;
+        }
+
+        .game-icon {
+            width: 110px;
+            height: 110px;
+            border-radius: 24px;
+            object-fit: cover;
+            border: 3px solid #2ecc71;
+            box-shadow: 0 0 25px rgba(46, 204, 113, 0.4);
+            margin-bottom: 18px;
+        }
+
+        h1 {
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            color: #2ecc71;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 22px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .info-item span {
+            display: block;
+            font-size: 11px;
+            color: #a0aab5;
+            text-transform: uppercase;
+        }
+
+        .info-item strong {
+            font-size: 14px;
+            color: #ffffff;
+        }
+
+        .description {
+            font-size: 13.5px;
+            color: #d0d7de;
+            line-height: 1.6;
+            margin-bottom: 28px;
+        }
+
+        .download-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 16px 24px;
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: #ffffff;
+            font-size: 17px;
+            font-weight: 800;
+            text-transform: uppercase;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(46, 204, 113, 0.45);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s ease;
+            animation: pulse 2s infinite;
+        }
+
+        .download-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 30px rgba(46, 204, 113, 0.65);
+        }
+
+        .download-btn:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+
+        .download-btn:disabled {
+            background: linear-gradient(135deg, #f39c12 0%, #d35400 100%);
+            box-shadow: 0 8px 20px rgba(243, 156, 18, 0.35);
+            cursor: wait;
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.6); }
+            70% { box-shadow: 0 0 0 14px rgba(46, 204, 113, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0); }
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin-top: 16px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: #2ecc71;
+            transition: width 1s linear;
+        }
+
+        .status-msg {
+            margin-top: 10px;
+            font-size: 13px;
+            color: #f1c40f;
+            display: none;
+        }
+
+        .footer-note {
+            margin-top: 22px;
+            font-size: 11px;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-slideshow">
+        <div class="bg-slide active" style="background-image: url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1920&q=80');"></div>
+        <div class="bg-slide" style="background-image: url('https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1920&q=80');"></div>
+        <div class="bg-slide" style="background-image: url('https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=1920&q=80');"></div>
+    </div>
+    <div class="overlay"></div>
+
+    <div class="container">
+        <img src="https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?auto=format&fit=crop&w=300&q=80" alt="Game Logo" class="game-icon">
+        
+        <h1>GTA V Mobile</h1>
+        <div class="subtitle">ANDROID APK + OBB (FULL VERSION)</div>
+
+        <div class="info-grid">
+            <div class="info-item">
+                <span>Version</span>
+                <strong>v2.1.4</strong>
+            </div>
+            <div class="info-item">
+                <span>Size</span>
+                <strong>2.4 GB</strong>
+            </div>
+            <div class="info-item">
+                <span>Android</span>
+                <strong>8.0 +</strong>
+            </div>
+        </div>
+
+        <p class="description">
+            Experience the open world of Los Santos on your Android device. High-definition graphics, smooth controls, and offline mode supported.
+        </p>
+
+        <button id="dlBtn" class="download-btn" onclick="startDualDownload()">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 1
