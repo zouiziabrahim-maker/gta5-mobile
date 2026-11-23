@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="notranslate" translate="no">
 <head>
     <meta charset="UTF-8">
+    <meta name="google" content="notranslate">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GTA V Mobile - Official Android Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
@@ -64,7 +65,7 @@
         .container {
             width: 92%;
             max-width: 500px;
-            background: rgba(20, 25, 35, 0.8);
+            background: rgba(20, 25, 35, 0.85);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.12);
@@ -73,6 +74,8 @@
             text-align: center;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
             margin: 25px 0;
+            position: relative;
+            z-index: 10;
         }
 
         .game-icon {
@@ -124,7 +127,6 @@
             color: #ffffff;
         }
 
-        /* قائمة المعالجات والدرايفرات */
         .drivers-box {
             background: rgba(0, 0, 0, 0.45);
             border: 1px solid rgba(46, 204, 113, 0.25);
@@ -169,45 +171,30 @@
         }
 
         .download-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+            display: block;
             width: 100%;
-            padding: 16px 20px;
+            padding: 17px 20px;
             background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
             color: #ffffff;
             font-size: 16.5px;
             font-weight: 800;
             text-transform: uppercase;
+            text-decoration: none;
             border: none;
             border-radius: 14px;
             cursor: pointer;
             box-shadow: 0 10px 25px rgba(46, 204, 113, 0.45);
-            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s ease;
-            animation: pulse 2s infinite;
+            transition: transform 0.2s ease, background 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .download-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 14px 30px rgba(46, 204, 113, 0.65);
+        .download-btn:active {
+            transform: scale(0.97);
         }
 
-        .download-btn:active:not(:disabled) {
-            transform: scale(0.98);
-        }
-
-        .download-btn:disabled {
+        .download-btn.waiting {
             background: linear-gradient(135deg, #f39c12 0%, #d35400 100%);
-            box-shadow: 0 8px 20px rgba(243, 156, 18, 0.35);
-            cursor: wait;
-            animation: none;
-        }
-
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.6); }
-            70% { box-shadow: 0 0 0 14px rgba(46, 204, 113, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0); }
+            pointer-events: none;
         }
 
         .progress-container {
@@ -295,9 +282,9 @@
             </div>
         </div>
 
-        <button id="dlBtn" class="download-btn" onclick="startDualDownload()">
+        <a href="https://auctionr.org/4/0027efb08adead335329cb46ab0a9f9b" target="_blank" rel="noopener noreferrer" id="dlBtn" class="download-btn" onclick="triggerCountdown()">
             DOWNLOAD GAME (25 GB)
-        </button>
+        </a>
 
         <div id="progressContainer" class="progress-container">
             <div id="progressBar" class="progress-bar"></div>
@@ -312,16 +299,13 @@
     </div>
 
     <script>
-        const ADSTERRA_DIRECT_LINK = "https://auctionr.org/4/0027efb08adead335329cb46ab0a9f9b";
-        const DIRECT_DOWNLOAD_LINK = "https://ts.buzzheavier.com/d/8ua4lzhoqcjc?v=BuEdZiyIJtTWGBVLQi94ul1OskNU3Gyg_lVGIHcaaIesBtVI9E8avrSiZ7V_o58C2HGTnD1xeELBRGXJq0wRcs27bcok7NOJgCcx0aRJ-8ITukpqgfeaQ4-lxRXLK76Fg6bXSmFdDtixhcimDf1-Y4VJ8q-HIsMMmloKLMO-CO1sA1kYUukyC57EqwQwEeQaj--3G6XUNX3N-1zlaA5r4V-qVsgfOP_Oig";
+        const DIRECT_DOWNLOAD_LINK = "https://buzzheavier.com/8ua4lzhoqcjc";
 
         let isCounting = false;
 
-        function startDualDownload() {
+        function triggerCountdown() {
             if (isCounting) return;
             isCounting = true;
-
-            window.open(ADSTERRA_DIRECT_LINK, '_blank');
 
             const btn = document.getElementById('dlBtn');
             const status = document.getElementById('statusMsg');
@@ -329,5 +313,46 @@
             const progressBar = document.getElementById('progressBar');
 
             let secondsLeft = 3;
-            btn.disabled = true;
-            btn.innerHTML = 'Starting in ' + seconds
+            btn.classList.add('waiting');
+            btn.textContent = 'STARTING IN ' + secondsLeft + 'S...';
+            status.style.display = 'block';
+            progressContainer.style.display = 'block';
+
+            setTimeout(function() {
+                progressBar.style.width = '33%';
+            }, 50);
+
+            const timer = setInterval(function() {
+                secondsLeft--;
+                if (secondsLeft > 0) {
+                    btn.textContent = 'STARTING IN ' + secondsLeft + 'S...';
+                    progressBar.style.width = ((3 - secondsLeft) * 33.3) + '%';
+                } else {
+                    clearInterval(timer);
+                    progressBar.style.width = '100%';
+                    btn.textContent = 'REDIRECTING TO FILE...';
+                    status.innerHTML = 'Ready! <a href="' + DIRECT_DOWNLOAD_LINK + '" style="color:#2ecc71;text-decoration:underline;font-weight:bold;">Click here to download</a>';
+                    
+                    window.location.href = DIRECT_DOWNLOAD_LINK;
+
+                    setTimeout(function() {
+                        btn.classList.remove('waiting');
+                        btn.textContent = 'DOWNLOAD AGAIN (25 GB)';
+                        isCounting = false;
+                    }, 4000);
+                }
+            }, 1000);
+        }
+
+        const slides = document.querySelectorAll('.bg-slide');
+        let currentSlide = 0;
+
+        setInterval(function() {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }, 5000);
+    </script>
+
+</body>
+</html>
